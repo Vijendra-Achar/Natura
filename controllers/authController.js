@@ -1,4 +1,5 @@
 // Imports
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 
@@ -14,6 +15,19 @@ const signJWTToken = id => {
   });
 };
 
+// Generate the Token and send a Response
+const createAndSendToken = (user, statusCode, res) => {
+  const myJWTtoken = signJWTToken(user._id);
+
+  res.status(statusCode).json({
+    status: 'success',
+    token: myJWTtoken,
+    data: {
+      user
+    }
+  });
+};
+
 // Sign up new User.
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await UserModel.create({
@@ -25,15 +39,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role
   });
 
-  const myJWTtoken = signJWTToken(newUser._id);
-
-  res.status(201).json({
-    status: 'success',
-    token: myJWTtoken,
-    data: {
-      user: newUser
-    }
-  });
+  createAndSendToken(newUser, 201, res);
 });
 
 // Login an existing User
@@ -52,14 +58,8 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect E-mail or Password', 401));
   }
 
-  // If Correct, Sign the token
-  const token = signJWTToken(user._id);
-
-  // Send the Response
-  res.status(200).json({
-    status: 'success',
-    token
-  });
+  // If Correct, Sign the token and Send the Response
+  createAndSendToken(user, 200, res);
 });
 
 // Route Protection
@@ -149,4 +149,47 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 // Route to change the password with both the E-mail address and the Current Password
-exports.resetPassword = (req, res, next) => {};
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  // Get the User based on the Token
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const currentUser = await UserModel.findOne({ passwordResetToken: hashedToken, passwordResetTokenExpires: { $gt: Date.now() } });
+
+  // If the token has not expired and there is a User, set New Password
+  if (!currentUser) {
+    return next(new AppError('The Token is invalid or has expired.', 400));
+  }
+
+  currentUser.password = req.body.password;
+  currentUser.passwordConfirm = req.body.passwordConfirm;
+  currentUser.passwordResetToken = undefined;
+  currentUser.passwordResetTokenExpires = undefined;
+
+  await currentUser.save();
+
+  // Update the passwordChangedAt property to the current time (Middleware Function).
+  // Log the User in, Send a JWT
+  createAndSendToken(currentUser, 200, res);
+});
+
+// Route to change the password with the Current Password
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // Get the Current User
+  const currentUser = await UserModel.findById(req.user.id).select('+password');
+
+  // Check if the the Posted password is correct
+  if (!(await currentUser.checkCorrectPassword(req.body.passwordCurrent, currentUser.password))) {
+    return next(new AppError('Your existing password is not correct. Please Re-enter the password', 401));
+  }
+
+  // If Correct, Update Password
+  currentUser.password = req.body.password;
+  currentUser.passwordConfirm = req.body.passwordConfirm;
+
+  await currentUser.save();
+
+  createAndSendToken(currentUser, 200, res);
+});

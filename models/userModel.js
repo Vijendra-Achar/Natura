@@ -60,6 +60,16 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
+// Middleware function to set the passwordChangedAt field if the passsword was modified.
+userSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) {
+    return next();
+  }
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 // Checks if the password entered by the user matches the existing password in the database / BCRYPT
 userSchema.methods.checkCorrectPassword = async function(candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
@@ -86,9 +96,7 @@ userSchema.methods.createPasswordResetToken = function() {
     .update(resetToken)
     .digest('hex');
 
-  this.passwordResetTokenExpires = Date.now() * 10 * 60 * 1000;
-
-  console.log({ resetToken }, this.passwordResetToken);
+  this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
 };
