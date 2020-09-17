@@ -8,11 +8,18 @@ const router = express.Router();
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 
-// POST Request For Password reset
+// POST & PATCH Request For Password reset
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
+// PATCH Request for updating user Password
 router.patch('/updateMyPassword', authController.protectRoute, authController.updatePassword);
+
+// Patch Request for Updating User data
+router.patch('/updateMe', authController.protectRoute, userController.updateMe);
+
+// Delete Request for Deleteing User data
+router.delete('/deleteMe', authController.protectRoute, userController.deleteMe);
 
 // GET & POST Requests for Users
 router

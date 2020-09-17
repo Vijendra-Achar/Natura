@@ -43,7 +43,11 @@ const userSchema = new mongoose.Schema(
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
-    passwordResetTokenExpires: Date
+    passwordResetTokenExpires: Date,
+    active: {
+      type: Boolean,
+      default: true
+    }
   },
   {
     toJSON: { virtuals: true },
@@ -67,6 +71,12 @@ userSchema.pre('save', function(next) {
   }
 
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// Middleware to filter out the Inactive Users
+userSchema.pre(/^find/, function(next) {
+  this.find({ active: { $ne: false } });
   next();
 });
 
