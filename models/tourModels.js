@@ -1,7 +1,7 @@
 // Imports
 const mongoose = require('mongoose');
-
 const slugify = require('slugify');
+// const UserModel = require('./userModel');
 
 // Schema Definition and Model Creation
 const tourSchema = new mongoose.Schema(
@@ -76,7 +76,37 @@ const tourSchema = new mongoose.Schema(
     secretTour: {
       type: Boolean,
       default: false
-    }
+    },
+    startLocation: {
+      // This is an object that can store GeoJSON for Location co-ordinates
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point']
+      },
+      coordinates: [Number],
+      address: String,
+      description: String
+    },
+    locations: [
+      // This is an array of objects that can store GeoJSON for Location co-ordinates
+      {
+        type: {
+          type: 'String',
+          default: 'Point',
+          enum: ['Point']
+        },
+        coordinates: [Number],
+        address: String,
+        description: String
+      }
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+      }
+    ]
   },
   {
     toJSON: { virtuals: true },
@@ -96,9 +126,10 @@ tourSchema.pre('save', function(next) {
   next();
 });
 
-// POST Document Middleware
-tourSchema.post('save', function(doc, next) {
-  console.log(doc);
+// Aggregate Middleware: Apply a condition (stage) to all the pipelines available
+// Pre Aggregate Middleware
+tourSchema.pre('aggregate', function(next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
 
@@ -110,17 +141,38 @@ tourSchema.pre(/^find/, function(next) {
   next();
 });
 
+// Query Middleware: To populate the guide data in the tours document when all tours are queried
+// PRE Query Middleware
+tourSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordResetToken -passwordChangedAt'
+  });
+  next();
+});
+
+// // Document Middleware to Embed users data into tour data
+// //PRE Document Middleware
+// tourSchema.pre('save', async function(next) {
+//   const guidePromises = this.guides.map(async id => {
+//     return await UserModel.findById(id);
+//   });
+
+//   this.guides = await Promise.all(guidePromises);
+
+//   next();
+// });
+
+// POST Document Middleware
+tourSchema.post('save', function(doc, next) {
+  console.log(doc);
+  next();
+});
+
 // POST Query Middleware
 tourSchema.post(/^find/, function(doc, next) {
   this.done = Date.now();
   console.log(`The Operation Took ${this.done - this.start} milliseconds`);
-  next();
-});
-
-// Aggregate Middleware: Apply a condition (stage) to all the pipelines available
-// Pre Aggregate Middleware
-tourSchema.pre('aggregate', function(next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
 
