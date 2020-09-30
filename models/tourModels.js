@@ -119,6 +119,13 @@ tourSchema.virtual('durationInWeeks').get(function() {
   return this.duration / 7;
 });
 
+// Virtual Populate: Reviews
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id'
+});
+
 // Document Middleware: to add a URL-Slug as a property to the document before being saved
 // PRE Document Middleware
 tourSchema.pre('save', function(next) {

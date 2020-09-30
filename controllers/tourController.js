@@ -1,3 +1,4 @@
+const AppError = require('../utils/appError');
 const TourModel = require('./../models/tourModels');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
@@ -32,7 +33,11 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 
 // Request Handling Function For GET one Tour
 exports.getOneTour = catchAsync(async (req, res, next) => {
-  const requestedTour = await TourModel.findById(req.params.id);
+  const requestedTour = await TourModel.findById(req.params.id).populate('reviews');
+
+  if (!requestedTour) {
+    return next(new AppError('The Tour with this ID does not exist.', 404));
+  }
 
   res.status(200).json({
     status: 'success',

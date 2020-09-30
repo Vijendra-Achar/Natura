@@ -37,17 +37,11 @@ const reviewSchema = new mongoose.Schema(
 // PRE, Parent referencing, Populating the User field form Users collection
 reviewSchema.pre(/^find/, function(next) {
   this.populate({
-    path: 'user',
-    select: '_id, name, email'
-  });
-  next();
-});
-
-// PRE, Parent referencing, Populating the tour field form Tours collection
-reviewSchema.pre(/^find/, function(next) {
-  this.populate({
     path: 'tour',
-    select: '_id, name, price'
+    select: 'name'
+  }).populate({
+    path: 'user',
+    select: 'name profilePicture'
   });
   next();
 });
