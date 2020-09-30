@@ -10,6 +10,7 @@ const hpp = require('hpp');
 // Local Module Imports
 const tourRouter = require('./routes/tourRoutes');
 const usersRouter = require('./routes/usersRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -70,6 +71,9 @@ app.use('/api/v1/tours', tourRouter);
 
 // Users Router
 app.use('/api/v1/users', usersRouter);
+
+// Review Routes
+app.use('/api/v1/reviews', reviewRouter);
 
 // Router to handle UNDEFINED Routes
 app.all('*', (req, res, next) => {
