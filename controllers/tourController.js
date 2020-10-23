@@ -3,6 +3,8 @@ const TourModel = require('./../models/tourModels');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
 
+const factoryHandler = require('./factoryHandlers');
+
 // Configure middleware for alias route
 exports.aliasTopFive = (req, res, next) => {
   req.query.limit = '5';
@@ -63,14 +65,7 @@ exports.patchTour = catchAsync(async (req, res, next) => {
 });
 
 // Request Handling Function For DELETE one Tour
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const deletedTour = await TourModel.findByIdAndDelete(req.params.id);
-
-  res.status(204).json({
-    status: 'success',
-    data: deletedTour
-  });
-});
+exports.deleteTour = factoryHandler.deleteOne(TourModel);
 
 // Request Handling Function For POST new Tour
 exports.CreateNewTour = catchAsync(async (req, res, next) => {

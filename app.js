@@ -81,4 +81,6 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(globalErrorHandler);
+
+// Export app
 module.exports = app;

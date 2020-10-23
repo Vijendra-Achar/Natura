@@ -2,9 +2,11 @@ const express = require('express');
 // const app = require('../app');
 const tourController = require('./../controllers/tourController');
 const authController = require('./../controllers/authController');
+const reviewRoutes = require('./../routes/reviewRoutes');
 
 const router = express.Router();
 
+router.use('/:tourId/reviews', reviewRoutes);
 // router.param('id', tourController.validateId);
 
 // GET Alias Route

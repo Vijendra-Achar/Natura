@@ -3,6 +3,8 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const UserModel = require('./../models/userModel');
 
+const factoryHandler = require('./factoryHandlers');
+
 // Method to filter the data before Document Updation
 const filterObj = (obj, ...updatableData) => {
   const filteredObjData = {};
@@ -55,12 +57,7 @@ exports.updateUserdata = (req, res) => {
 };
 
 // Request Handling Function For DELETE one User
-exports.deleteUserData = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Delete User data Route not defined.'
-  });
-};
+exports.deleteUserData = factoryHandler.deleteOne(UserModel);
 
 // Request Handling to update the details of the currently Logged in User
 exports.updateMe = catchAsync(async (req, res, next) => {
