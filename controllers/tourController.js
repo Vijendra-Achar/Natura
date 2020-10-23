@@ -16,7 +16,7 @@ exports.aliasTopFive = (req, res, next) => {
 // Request Handling Function For GET All Tours
 exports.getAllTours = catchAsync(async (req, res, next) => {
   // Final Query
-  const features = new APIFeatures(TourModel.find(), req.query)
+  const features = new APIFeatures(TourModel.find().populate('reviews'), req.query)
     .filter()
     .limitFields()
     .sorting()
@@ -50,34 +50,13 @@ exports.getOneTour = catchAsync(async (req, res, next) => {
 });
 
 // Request Handling Function For PUT (or) PATCH one Tour
-exports.patchTour = catchAsync(async (req, res, next) => {
-  const updatedTour = await TourModel.findByIdAndUpdate(req.params.id, req.body, {
-    runValidators: true,
-    new: true
-  });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: updatedTour
-    }
-  });
-});
+exports.patchTour = factoryHandler.updateOne(TourModel);
 
 // Request Handling Function For DELETE one Tour
 exports.deleteTour = factoryHandler.deleteOne(TourModel);
 
 // Request Handling Function For POST new Tour
-exports.CreateNewTour = catchAsync(async (req, res, next) => {
-  const newTour = await TourModel.create(req.body);
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: newTour
-    }
-  });
-});
+exports.CreateNewTour = factoryHandler.createOne(TourModel);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await TourModel.aggregate([

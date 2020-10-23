@@ -1,7 +1,6 @@
-const userModel = require('./../models/userModel');
+const UserModel = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-const UserModel = require('./../models/userModel');
 
 const factoryHandler = require('./factoryHandlers');
 
@@ -20,7 +19,7 @@ const filterObj = (obj, ...updatableData) => {
 
 // Request Handling Function For GET All Users
 exports.getAllUsers = catchAsync(async (req, res) => {
-  const allUsersData = await userModel.find();
+  const allUsersData = await UserModel.find();
 
   res.status(200).json({
     status: 'success',
@@ -49,12 +48,7 @@ exports.oneUserData = (req, res) => {
 };
 
 // Request Handling Function For PATCH one User
-exports.updateUserdata = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Update User data Route not defined.'
-  });
-};
+exports.updateUserdata = factoryHandler.updateOne(UserModel);
 
 // Request Handling Function For DELETE one User
 exports.deleteUserData = factoryHandler.deleteOne(UserModel);
@@ -68,7 +62,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // Filer the Unnecessary fields. mention only the Updatable fields.
   const filteredObj = filterObj(req.body, 'name');
   // Update User Data
-  const updatedUser = await userModel.findByIdAndUpdate(req.user.id, filteredObj, {
+  const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, filteredObj, {
     runValidators: true,
     new: true
   });

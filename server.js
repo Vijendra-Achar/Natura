@@ -13,7 +13,10 @@ dotenv.config({ path: './config.env' });
 const app = require('./app');
 
 // Database string with Password
-const dbUrl = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD).replace('<DB_NAME>', process.env.DATABASE_CLUSTER_NAME);
+const dbUrl = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD).replace(
+  '<DB_NAME>',
+  process.env.DATABASE_CLUSTER_NAME
+);
 
 console.log(`Current Node Environment = ${process.env.NODE_ENV}`);
 
@@ -25,9 +28,9 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true
   })
-  .then(() => console.log('MongoDB was successfully Connected!📚🚀'))
+  .then(() => console.log('MongoDB was successfully Connected!✔'))
   .catch(err => {
-    console.log('Mongo DB Connection Failed 💥', err);
+    console.log('Mongo DB Connection Failed ❌', err);
   });
 
 // Server Port Number and Server's Event Loop
