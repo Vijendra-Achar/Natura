@@ -13,39 +13,22 @@ const filterObj = (obj, ...updatableData) => {
       filteredObjData[el] = obj[el];
     }
   });
-
   return filteredObjData;
 };
-
-// Request Handling Function For GET All Users
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const allUsersData = await UserModel.find();
-
-  res.status(200).json({
-    status: 'success',
-    results: allUsersData.length,
-    timeOfRequest: req.time,
-    data: {
-      users: allUsersData
-    }
-  });
-});
 
 // Request Handling Function For POST All Users
 exports.newUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'Post User Route not defined.'
+    message: 'Post User Route not defined! Please use the /signUp Route to Create new User'
   });
 };
 
+// Request Handling Function For GET All Users
+exports.getAllUsers = factoryHandler.getAll(UserModel);
+
 // Request Handling Function For GET One User
-exports.oneUserData = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Single User Data Route not defined.'
-  });
-};
+exports.oneUserData = factoryHandler.getOne(UserModel);
 
 // Request Handling Function For PATCH one User
 exports.updateUserdata = factoryHandler.updateOne(UserModel);

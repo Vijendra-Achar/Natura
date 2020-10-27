@@ -1,6 +1,5 @@
 const AppError = require('../utils/appError');
 const TourModel = require('./../models/tourModels');
-const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
 
 const factoryHandler = require('./factoryHandlers');
@@ -14,40 +13,10 @@ exports.aliasTopFive = (req, res, next) => {
 };
 
 // Request Handling Function For GET All Tours
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  // Final Query
-  const features = new APIFeatures(TourModel.find().populate('reviews'), req.query)
-    .filter()
-    .limitFields()
-    .sorting()
-    .paginate();
-  const allTourData = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    results: allTourData.length,
-    timeOfRequest: req.time,
-    data: {
-      tours: allTourData
-    }
-  });
-});
+exports.getAllTours = factoryHandler.getAll(TourModel);
 
 // Request Handling Function For GET one Tour
-exports.getOneTour = catchAsync(async (req, res, next) => {
-  const requestedTour = await TourModel.findById(req.params.id).populate('reviews');
-
-  if (!requestedTour) {
-    return next(new AppError('The Tour with this ID does not exist.', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: requestedTour
-    }
-  });
-});
+exports.getOneTour = factoryHandler.getOne(TourModel, { path: 'reviews' });
 
 // Request Handling Function For PUT (or) PATCH one Tour
 exports.patchTour = factoryHandler.updateOne(TourModel);
@@ -58,6 +27,7 @@ exports.deleteTour = factoryHandler.deleteOne(TourModel);
 // Request Handling Function For POST new Tour
 exports.CreateNewTour = factoryHandler.createOne(TourModel);
 
+// Get the tour stats accoring to the average ratings
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await TourModel.aggregate([
     {
@@ -85,6 +55,7 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
   });
 });
 
+// Get the tours and their data according to the months
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   const year = req.params.year * 1;
 
