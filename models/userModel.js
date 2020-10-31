@@ -8,28 +8,28 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'Please Enter your Name.']
+      required: [true, 'Please Enter your Name.'],
     },
     email: {
       type: String,
       required: [true, 'Please Enter your E-mail Address.'],
       unique: true,
       lowercase: true,
-      validate: [validator.isEmail, 'Please provide a valid E-mail.']
+      validate: [validator.isEmail, 'Please provide a valid E-mail.'],
     },
     role: {
       type: String,
       enum: ['user', 'guide', 'lead-guide', 'admin'],
-      default: 'user'
+      default: 'user',
     },
     profilePicture: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
       required: [true, 'Please enter a password that has a minimum of 8 characters'],
       minlength: 8,
-      select: false
+      select: false,
     },
     passwordConfirm: {
       type: String,
@@ -38,21 +38,21 @@ const userSchema = new mongoose.Schema(
         validator: function(el) {
           return el === this.password;
         },
-        message: 'Passwords do not match!'
-      }
+        message: 'Passwords do not match!',
+      },
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetTokenExpires: Date,
     active: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 );
 
 // Encrypts the Password before storing it into the Database / BCRYPT
