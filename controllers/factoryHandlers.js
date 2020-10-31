@@ -3,7 +3,7 @@ const AppError = require('./../utils/appError');
 const APIFeatures = require('./../utils/apiFeatures');
 
 // Handler function for getting all Documents
-exports.getAll = MyModel => {
+exports.getAll = (MyModel) => {
   return catchAsync(async (req, res, next) => {
     let filter = {};
 
@@ -23,8 +23,8 @@ exports.getAll = MyModel => {
       results: doc.length,
       timeOfRequest: req.time,
       data: {
-        data: doc
-      }
+        data: doc,
+      },
     });
   });
 };
@@ -48,34 +48,36 @@ exports.getOne = (MyModel, populateOptions) => {
     const doc = await query;
 
     if (!doc) {
-      return next(new AppError('The Document with this ID does not exist.', 404));
+      return next(
+        new AppError('The Document with this ID does not exist.', 404),
+      );
     }
 
     res.status(200).json({
       status: 'success',
       data: {
-        data: doc
-      }
+        data: doc,
+      },
     });
   });
 };
 
 // Handler function for Creating a Document
-exports.createOne = MyModel => {
+exports.createOne = (MyModel) => {
   return catchAsync(async (req, res, next) => {
     const doc = await MyModel.create(req.body);
 
     res.status(200).json({
       status: 'success',
       data: {
-        data: doc
-      }
+        data: doc,
+      },
     });
   });
 };
 
 // Handler function for Updating a Document.
-exports.updateOne = MyModel => {
+exports.updateOne = (MyModel) => {
   return catchAsync(async (req, res, next) => {
     let theId;
 
@@ -86,7 +88,7 @@ exports.updateOne = MyModel => {
     // Query and Update Document
     const doc = await MyModel.findByIdAndUpdate(theId, req.body, {
       runValidators: true,
-      new: true
+      new: true,
     });
 
     if (!doc) {
@@ -96,14 +98,14 @@ exports.updateOne = MyModel => {
     res.status(200).json({
       status: 'success',
       data: {
-        data: doc
-      }
+        data: doc,
+      },
     });
   });
 };
 
 // Handler function for Deleting a Document.
-exports.deleteOne = MyModel => {
+exports.deleteOne = (MyModel) => {
   return catchAsync(async (req, res, next) => {
     let theId;
 
@@ -120,7 +122,7 @@ exports.deleteOne = MyModel => {
 
     res.status(204).json({
       status: 'success',
-      data: null
+      data: null,
     });
   });
 };

@@ -12,14 +12,23 @@ router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
+// This middelware will apply route protection to all the routes beyond this point.
+router.use(authController.protectRoute);
+
+// GET Request handler to get the info about the currently logged in user
+router.get('/me', userController.getMe, userController.oneUserData);
+
 // PATCH Request for updating user Password
-router.patch('/updateMyPassword', authController.protectRoute, authController.updatePassword);
+router.patch('/updateMyPassword', authController.updatePassword);
 
 // Patch Request for Updating User data
-router.patch('/updateMe', authController.protectRoute, userController.updateMe);
+router.patch('/updateMe', userController.updateMe);
 
 // Delete Request for Deleteing User data
-router.delete('/deleteMe', authController.protectRoute, userController.deleteMe);
+router.delete('/deleteMe', userController.deleteMe);
+
+// Only admins can access the routes beyond this point.
+router.use(authController.restrictRoute('admin'));
 
 // GET & POST Requests for Users
 router

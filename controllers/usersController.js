@@ -36,6 +36,12 @@ exports.updateUserdata = factoryHandler.updateOne(UserModel);
 // Request Handling Function For DELETE one User
 exports.deleteUserData = factoryHandler.deleteOne(UserModel);
 
+// Request handling middleware to get the info about the currently logged in user
+exports.getMe = (req, res, next) => {
+  req.params.uid = req.user.id;
+  next();
+};
+
 // Request Handling to update the details of the currently Logged in User
 exports.updateMe = catchAsync(async (req, res, next) => {
   // We should not allow the user to update the Password using this route. Check for Password in the Body

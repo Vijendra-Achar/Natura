@@ -6,22 +6,29 @@ const authController = require('./../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
+router.use(authController.protectRoute);
+
 // GET & POST Request Handling for "reviews".
 router
   .route('/')
   .get(reviewController.getAllReviews)
   .post(
-    authController.protectRoute,
     authController.restrictRoute('user'),
     reviewController.setUserAndTour,
-    reviewController.postReview
+    reviewController.postReview,
   );
 
 router
   .route('/:id')
   .get(reviewController.getReview)
-  .delete(reviewController.deleteReview)
-  .patch(reviewController.updateReview);
+  .delete(
+    authController.restrictRoute('admin', 'user'),
+    reviewController.deleteReview,
+  )
+  .patch(
+    authController.restrictRoute('admin', 'user'),
+    reviewController.updateReview,
+  );
 
 // Export this Router
 module.exports = router;
