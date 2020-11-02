@@ -164,16 +164,11 @@ tourSchema.pre(/^find/, function(next) {
   next();
 });
 
+// PRE to populate all the reviews upon Query
 tourSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'reviews',
   });
-  next();
-});
-
-// POST Document Middleware
-tourSchema.post('save', function(doc, next) {
-  console.log(doc);
   next();
 });
 
@@ -187,17 +182,3 @@ tourSchema.post(/^find/, function(doc, next) {
 const TourModel = mongoose.model('Tour', tourSchema);
 
 module.exports = TourModel;
-
-/*-------------------------------------------EXTRAS-------------------------------------------------------------------*/
-
-// // Document Middleware to Embed users data into tour data
-// //PRE Document Middleware
-// tourSchema.pre('save', async function(next) {
-//   const guidePromises = this.guides.map(async id => {
-//     return await UserModel.findById(id);
-//   });
-
-//   this.guides = await Promise.all(guidePromises);
-
-//   next();
-// });

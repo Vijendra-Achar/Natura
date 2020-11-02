@@ -1,0 +1,19 @@
+/*-------------------------------------------EXTRAS-------------------------------------------------------------------*/
+
+// // Document Middleware to Embed users data into tour data
+// //PRE Document Middleware
+// tourSchema.pre('save', async function(next) {
+//   const guidePromises = this.guides.map(async id => {
+//     return await UserModel.findById(id);
+//   });
+
+//   this.guides = await Promise.all(guidePromises);
+
+//   next();
+// });
+
+// // POST Document Middleware
+// tourSchema.post('save', function(doc, next) {
+//   console.log(doc);
+//   next();
+// });
