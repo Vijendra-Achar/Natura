@@ -48,9 +48,7 @@ exports.getOne = (MyModel, populateOptions) => {
     const doc = await query;
 
     if (!doc) {
-      return next(
-        new AppError('The Document with this ID does not exist.', 404),
-      );
+      return next(new AppError('The Document with this ID does not exist.', 404));
     }
 
     res.status(200).json({

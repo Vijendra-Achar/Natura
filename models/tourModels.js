@@ -12,38 +12,38 @@ const tourSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       minlength: [5, 'The Tour Name must have atleast 5 Characters.'],
-      maxlength: [40, 'The Tour Name must have less than 40 Characters.']
+      maxlength: [40, 'The Tour Name must have less than 40 Characters.'],
     },
     slug: String,
     duration: {
       type: Number,
-      required: [true, 'A Tour must have a duration.']
+      required: [true, 'A Tour must have a duration.'],
     },
     maxGroupSize: {
       type: Number,
-      required: [true, 'A Tour must have a maximum Group size.']
+      required: [true, 'A Tour must have a maximum Group size.'],
     },
     difficulty: {
       type: String,
       required: [true, 'A Tour must have a difficulty level.'],
       enum: {
         values: ['easy', 'medium', 'difficult'],
-        message: 'The Difficulty should be either: EASY / MEDIUM / DIFFICULT'
-      }
+        message: 'The Difficulty should be either: EASY / MEDIUM / DIFFICULT',
+      },
     },
     price: {
       type: Number,
-      required: [true, 'A Tour must have a Price.']
+      required: [true, 'A Tour must have a Price.'],
     },
     ratingsAverage: {
       type: Number,
       default: 2.5,
       min: [1, 'The Rating should be between 1.0 and 5.0'],
-      max: [5, 'The Rating should be between 1.0 and 5.0']
+      max: [5, 'The Rating should be between 1.0 and 5.0'],
     },
     ratingsQuantity: {
       type: Number,
-      default: 0
+      default: 0,
     },
     priceDiscount: {
       type: Number,
@@ -51,42 +51,42 @@ const tourSchema = new mongoose.Schema(
         validator: function(val) {
           return val < this.price;
         },
-        message: 'The Discount ({VALUE}) should be Less than the Actual Price'
-      }
+        message: 'The Discount ({VALUE}) should be Less than the Actual Price',
+      },
     },
     summary: {
       type: String,
       required: [true, 'A Tour must have a Summary'],
-      trim: true
+      trim: true,
     },
     description: {
       type: String,
-      trim: true
+      trim: true,
     },
     imageCover: {
       type: String,
-      required: [true, 'A Tour must have a cover Image.']
+      required: [true, 'A Tour must have a cover Image.'],
     },
     images: [String],
     createdAt: {
       type: Date,
-      default: new Date(Date.now()).toUTCString()
+      default: new Date(Date.now()).toUTCString(),
     },
     startDates: [Date],
     secretTour: {
       type: Boolean,
-      default: false
+      default: false,
     },
     startLocation: {
       // This is an object that can store GeoJSON for Location co-ordinates
       type: {
         type: String,
         default: 'Point',
-        enum: ['Point']
+        enum: ['Point'],
       },
       coordinates: [Number],
       address: String,
-      description: String
+      description: String,
     },
     locations: [
       // This is an array of objects that can store GeoJSON for Location co-ordinates
@@ -94,25 +94,31 @@ const tourSchema = new mongoose.Schema(
         type: {
           type: 'String',
           default: 'Point',
-          enum: ['Point']
+          enum: ['Point'],
         },
         coordinates: [Number],
         address: String,
-        description: String
-      }
+        description: String,
+      },
     ],
     guides: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'User'
-      }
-    ]
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 );
+
+// Indexing for Price field
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+
+// Indexing for Slug field
+tourSchema.index({ slug: 1 });
 
 // Virtual Property of a schema
 tourSchema.virtual('durationInWeeks').get(function() {
@@ -123,7 +129,7 @@ tourSchema.virtual('durationInWeeks').get(function() {
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour',
-  localField: '_id'
+  localField: '_id',
 });
 
 // Document Middleware: to add a URL-Slug as a property to the document before being saved
@@ -153,14 +159,14 @@ tourSchema.pre(/^find/, function(next) {
 tourSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'guides',
-    select: '-__v -passwordResetToken -passwordChangedAt'
+    select: '-__v -passwordResetToken -passwordChangedAt',
   });
   next();
 });
 
 tourSchema.pre(/^find/, function(next) {
   this.populate({
-    path: 'reviews'
+    path: 'reviews',
   });
   next();
 });
