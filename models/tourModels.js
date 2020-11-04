@@ -118,6 +118,9 @@ const tourSchema = new mongoose.Schema(
 // Indexing for Price field
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 
+// Indexing for startocation for GeoSpatial queries
+tourSchema.index({ startLocation: '2dsphere' });
+
 // Indexing for Slug field
 tourSchema.index({ slug: 1 });
 

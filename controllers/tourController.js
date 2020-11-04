@@ -27,6 +27,31 @@ exports.deleteTour = factoryHandler.deleteOne(TourModel);
 // Request Handling Function For POST new Tour
 exports.CreateNewTour = factoryHandler.createOne(TourModel);
 
+// Request handling function for GET Tours-within / /tours-within/:distance/center/:latlong/unit/:unit
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+
+  const [lat, lng] = latlng.split(',');
+
+  const radius = unit === 'km' ? distance / 6378.1 : distance / 3963.2;
+
+  if (!lat || !lng) {
+    return next(new AppError('Please specify the latitude and longitude values in the format "lat","lng"', 400));
+  }
+
+  const toursWithin = await TourModel.find({ startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } } });
+
+  console.log(distance, lat, lng, unit);
+
+  res.status(200).json({
+    status: 'success',
+    results: toursWithin.length,
+    data: {
+      data: toursWithin,
+    },
+  });
+});
+
 // Get the tour stats accoring to the average ratings
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await TourModel.aggregate([

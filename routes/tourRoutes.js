@@ -9,10 +9,11 @@ const router = express.Router();
 router.use('/:tourId/reviews', reviewRoutes);
 // router.param('id', tourController.validateId);
 
+// GET Get tours with in a certain distance
+router.route('/tours-within/:distance/center/:latlng/unit/:unit').get(tourController.getToursWithin);
+
 // GET Alias Route
-router
-  .route('/top-5')
-  .get(tourController.aliasTopFive, tourController.getAllTours);
+router.route('/top-5').get(tourController.aliasTopFive, tourController.getAllTours);
 
 // GET Stats route
 router.route('/tour-stats').get(tourController.getTourStats);
@@ -30,26 +31,14 @@ router
 router
   .route('/')
   .get(tourController.getAllTours)
-  .post(
-    authController.protectRoute,
-    authController.restrictRoute('lead-guide', 'admin'),
-    tourController.CreateNewTour,
-  );
+  .post(authController.protectRoute, authController.restrictRoute('lead-guide', 'admin'), tourController.CreateNewTour);
 
 // GET, PATCH & DELETE Request Handling for "tour".
 router
   .route('/:id')
   .get(tourController.getOneTour)
-  .patch(
-    authController.protectRoute,
-    authController.restrictRoute('lead-guide', 'admin'),
-    tourController.patchTour,
-  )
-  .delete(
-    authController.protectRoute,
-    authController.restrictRoute('lead-guide', 'admin'),
-    tourController.deleteTour,
-  );
+  .patch(authController.protectRoute, authController.restrictRoute('lead-guide', 'admin'), tourController.patchTour)
+  .delete(authController.protectRoute, authController.restrictRoute('lead-guide', 'admin'), tourController.deleteTour);
 
 // Export this Module
 module.exports = router;
