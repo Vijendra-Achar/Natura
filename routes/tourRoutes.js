@@ -12,6 +12,9 @@ router.use('/:tourId/reviews', reviewRoutes);
 // GET Get tours with in a certain distance
 router.route('/tours-within/:distance/center/:latlng/unit/:unit').get(tourController.getToursWithin);
 
+// GET the distances of all tours from a given loction
+router.route('/tours-distances/:latlng/unit/:unit').get(tourController.getDistances);
+
 // GET Alias Route
 router.route('/top-5').get(tourController.aliasTopFive, tourController.getAllTours);
 

@@ -41,13 +41,50 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
 
   const toursWithin = await TourModel.find({ startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } } });
 
-  console.log(distance, lat, lng, unit);
-
   res.status(200).json({
     status: 'success',
     results: toursWithin.length,
     data: {
       data: toursWithin,
+    },
+  });
+});
+
+// Get the distance of all tours from a start loction
+exports.getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+
+  const [lat, lng] = latlng.split(',');
+
+  const multiplier = unit === 'km' ? 0.001 : 0.000621371;
+
+  if (!lat || !lng) {
+    return next(new AppError('Please specify the latitude and longitude values in the format "lat","lng"', 400));
+  }
+
+  const distances = await TourModel.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        distance: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: distances,
     },
   });
 });

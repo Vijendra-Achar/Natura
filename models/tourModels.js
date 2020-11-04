@@ -145,10 +145,10 @@ tourSchema.pre('save', function(next) {
 
 // Aggregate Middleware: Apply a condition (stage) to all the pipelines available
 // Pre Aggregate Middleware
-tourSchema.pre('aggregate', function(next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+// tourSchema.pre('aggregate', function(next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   next();
+// });
 
 // Query Middleware: Hide the Secret Tour when front end makes a Query for all the tours available
 // PRE Query Middleware
