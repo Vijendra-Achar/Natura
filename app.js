@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const path = require('path');
 
 // Local Module Imports
 const tourRouter = require('./routes/tourRoutes');
@@ -16,16 +17,25 @@ const AppError = require('./utils/appError');
 
 const app = express();
 
+// Set the app view engine to pug templetes
+app.set('view engine', 'pug');
+// Set the app engine to look for templates in the Views folder
+app.set('views', path.join(__dirname, 'views'));
+
 // Rate Limiter
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
-  message: 'Too Many requests. Please Try again in an Hour.'
+  message: 'Too Many requests. Please Try again in an Hour.',
 });
 
 // GLOBAL MIDDLEWARES
 
+// To serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // MIDDLEWARES / NPM PACKAGES
+
 // To set Secure HTTP headers
 app.use(helmet());
 
@@ -44,17 +54,14 @@ app.use(xss());
 // Prevent Parameter Pollution
 app.use(
   hpp({
-    whitelist: ['duration', 'price', 'difficulty', 'maxGroupSize', 'ratingsAverage', 'ratingsQuantity']
-  })
+    whitelist: ['duration', 'price', 'difficulty', 'maxGroupSize', 'ratingsAverage', 'ratingsQuantity'],
+  }),
 );
 
 // To log all Requests during Development
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
-
-// To serve static files
-app.use(express.static(`${__dirname}/public`));
 
 // CUSTOM MIDDLEWARES
 // Middleware to capture the time of Request.
@@ -65,6 +72,13 @@ app.use((req, res, next) => {
 });
 
 /* Router Mounting */
+
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'The Forest Hiker',
+    name: 'Vijendra',
+  });
+});
 
 // Tour Router
 app.use('/api/v1/tours', tourRouter);
