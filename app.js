@@ -12,6 +12,7 @@ const path = require('path');
 const tourRouter = require('./routes/tourRoutes');
 const usersRouter = require('./routes/usersRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const viewRouter = require('./routes/viewRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -73,12 +74,8 @@ app.use((req, res, next) => {
 
 /* Router Mounting */
 
-app.get('/', (req, res) => {
-  res.status(200).render('base', {
-    tour: 'The Forest Hiker',
-    name: 'Vijendra',
-  });
-});
+// Views Router
+app.use('/', viewRouter);
 
 // Tour Router
 app.use('/api/v1/tours', tourRouter);
