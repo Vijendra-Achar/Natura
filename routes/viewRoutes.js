@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/', viewController.getOverview);
 
 // GET route for tour page
-router.get('/tour', viewController.getTour);
+router.get('/tour/:slug', viewController.getTour);
 
 // Export this Module
 module.exports = router;
