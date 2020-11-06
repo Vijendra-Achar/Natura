@@ -80,7 +80,7 @@ reviewSchema.post(/^findOneAnd/, async function() {
 reviewSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'user',
-    select: 'name profilePicture',
+    select: 'name photo',
   });
   next();
 });

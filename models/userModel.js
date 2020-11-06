@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'guide', 'lead-guide', 'admin'],
       default: 'user',
     },
-    profilePicture: {
+    photo: {
       type: String,
     },
     password: {

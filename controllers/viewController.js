@@ -11,6 +11,7 @@ exports.getOverview = catchAsync(async (req, res) => {
   });
 });
 
+// Request handler for the tour details page
 exports.getTour = catchAsync(async (req, res) => {
   const tour = await TourModel.findOne({ slug: req.params.slug });
 

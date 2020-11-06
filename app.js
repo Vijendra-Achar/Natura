@@ -25,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Rate Limiter
 const limiter = rateLimit({
-  max: 100,
+  max: 1000,
   windowMs: 60 * 60 * 1000,
   message: 'Too Many requests. Please Try again in an Hour.',
 });
