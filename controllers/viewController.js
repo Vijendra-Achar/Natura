@@ -2,7 +2,7 @@ const TourModel = require('./../models/tourModels');
 const catchAsync = require('./../utils/catchAsync');
 
 // Request Handler for the Home Overview Page
-exports.getOverview = catchAsync(async (req, res) => {
+exports.getOverview = catchAsync(async (req, res, next) => {
   const tours = await TourModel.find();
 
   res.status(200).render('overview', {
@@ -12,7 +12,7 @@ exports.getOverview = catchAsync(async (req, res) => {
 });
 
 // Request handler for the tour details page
-exports.getTour = catchAsync(async (req, res) => {
+exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await TourModel.findOne({ slug: req.params.slug });
 
   res
@@ -26,3 +26,17 @@ exports.getTour = catchAsync(async (req, res) => {
       tour,
     });
 });
+
+// Request handler for the login page
+exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  res.status(200).render('login');
+};
+
+// Request handler for the signup page
+exports.signup = (req, res) => {
+  const { email, password } = req.body;
+
+  res.status(200).render('signup');
+};
