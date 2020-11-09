@@ -29,14 +29,14 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
 // Request handler for the login page
 exports.login = (req, res) => {
-  const { email, password } = req.body;
-
-  res.status(200).render('login');
+  res.status(200).render('login', {
+    title: 'Login',
+  });
 };
 
 // Request handler for the signup page
 exports.signup = (req, res) => {
-  const { email, password } = req.body;
-
-  res.status(200).render('signup');
+  res.status(200).render('signup', {
+    title: 'Sign Up',
+  });
 };
