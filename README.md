@@ -13,7 +13,7 @@ The Dependencies required for the Project are enlisted in 'package.json' file.
 
 ## Development server
 
-Run `node server.js` for a dev server. Use the route - `http://localhost:YOUR_PORT/` for the development and testing. The app will automatically reload if you change any of the source files.
+Run `node server.js` for a dev server. Use the route - `http://localhost:YOUR_PORT/` for the development and testing.
 
 ## Postman API Documentation
 
