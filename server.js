@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 // Uncaught Exception Handler
-process.on('uncaughtException', err => {
+process.on('uncaughtException', (err) => {
   console.log(err.name);
   console.log(err.message);
   process.exit(1);
@@ -15,7 +15,7 @@ const app = require('./app');
 // Database string with Password
 const dbUrl = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD).replace(
   '<DB_NAME>',
-  process.env.DATABASE_CLUSTER_NAME
+  process.env.DATABASE_CLUSTER_NAME,
 );
 
 console.log(`Current Node Environment = ${process.env.NODE_ENV}`);
@@ -26,10 +26,10 @@ mongoose
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => console.log('MongoDB was successfully Connected!✔'))
-  .catch(err => {
+  .catch((err) => {
     console.log('Mongo DB Connection Failed ❌', err);
   });
 
@@ -39,7 +39,7 @@ const myServer = app.listen(port, () => {
   console.log(`Project Natura running on port localhost:${port}`);
 });
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   console.log(err.name);
   console.log(err.message);
   myServer.close(() => {

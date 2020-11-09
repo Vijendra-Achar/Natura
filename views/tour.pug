@@ -1,5 +1,9 @@
 extends base
 
+block append head
+   script(src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js')
+   link(href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet')
+   
 mixin overviewBox(label, text, icon) 
    .overview-box__detail
       svg.overview-box__icon
@@ -29,14 +33,13 @@ block content
             span= `${tour.name}`
          .heading-box__group
             .heading-box__detail
-            svg.heading-box__icon
-               use(xlink:href='/img/icons.svg#icon-clock')
-            |  
-            span.heading-box__text= `${tour.duration} days`
+               svg.heading-box__icon
+                  use(xlink:href='/img/icons.svg#icon-clock')
+               span.heading-box__text= ` ${tour.duration} days`
             .heading-box__detail
-            svg.heading-box__icon
-               use(xlink:href='/img/icons.svg#icon-map-pin')
-            span.heading-box__text= `${tour.startLocation.description}`
+               svg.heading-box__icon
+                  use(xlink:href='/img/icons.svg#icon-map-pin')
+               span.heading-box__text= `${tour.startLocation.description}`
 
    section.section-description
       .overview-box
@@ -63,16 +66,6 @@ block content
                         span.overview-box__label Tour Guide
                      span.overview-box__text= guide.name
                   
-
-            //- .overview-box__detail
-            //-    img.overview-box__img(src='/img/users/user-18.jpg', alt='Tour guide')
-            //-    span.overview-box__label Tour guide
-            //-    span.overview-box__text Lisa Brown
-            //- .overview-box__detail
-            //-    img.overview-box__img(src='/img/users/user-17.jpg', alt='Intern')
-            //-    span.overview-box__label Intern
-            //-    span.overview-box__text Max Smith
-
       .description-box
          h2.heading-secondary.ma-bt-lg= `About ${tour.name} tour`
          - const paragraph = tour.description.split('\n')
@@ -87,7 +80,7 @@ block content
       
 
    section.section-map
-      #map
+      #map(data-locations=`${JSON.stringify(tour.locations)}`)
 
    section.section-reviews
       .reviews
@@ -95,22 +88,6 @@ block content
          each review in tour.reviews
             +reviewCard(review)
 
-         //- .reviews__card
-         //-    .reviews__avatar
-         //-    img.reviews__avatar-img(src='/img/users/user-7.jpg', alt='Jim Brown')
-         //-    h6.reviews__user Jim Brown
-         //-    p.reviews__text Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dignissimos sint quo commodi corrupti accusantium veniam saepe numquam.
-         //-    .reviews__rating
-         //-       svg.reviews__star.reviews__star--active
-         //-          use(xlink:href='/img/icons.svg#icon-star')
-         //-       svg.reviews__star.reviews__star--active
-         //-          use(xlink:href='/img/icons.svg#icon-star')
-         //-       svg.reviews__star.reviews__star--active
-         //-          use(xlink:href='/img/icons.svg#icon-star')
-         //-       svg.reviews__star.reviews__star--active
-         //-          use(xlink:href='/img/icons.svg#icon-star')
-         //-       svg.reviews__star.reviews__star--active
-         //-          use(xlink:href='/img/icons.svg#icon-star')
 
    section.section-cta
       .cta
