@@ -6,7 +6,12 @@ const router = express.Router();
 
 // POST Request for Creating New User
 router.post('/signup', authController.signup);
+
+// POST Request for logging users In
 router.post('/login', authController.login);
+
+// GET Request to logging Users Out
+router.get('/logout', authController.logout);
 
 // POST & PATCH Request For Password reset
 router.post('/forgotPassword', authController.forgotPassword);

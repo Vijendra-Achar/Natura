@@ -17,10 +17,10 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
   res
     .status(200)
-    .set(
-      'Content-Security-Policy',
-      "default-src 'self' https://*.mapbox.com ;base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src https://cdnjs.cloudflare.com https://api.mapbox.com 'self' blob: ;script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;",
-    )
+    // .set(
+    //   'Content-Security-Policy',
+    //   "default-src 'self' https://*.mapbox.com ;base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src https://cdnjs.cloudflare.com https://api.mapbox.com 'self' blob: ;script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests;",
+    // )
     .render('tour', {
       title: tour.name,
       tour,
@@ -29,9 +29,15 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
 // Request handler for the login page
 exports.login = (req, res) => {
-  res.status(200).render('login', {
-    title: 'Login',
-  });
+  res
+    .status(200)
+    // .set(
+    //   'Content-Security-Policy',
+    //   "script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js 'unsafe-inline' 'unsafe-eval';",
+    // )
+    .render('login', {
+      title: 'Login',
+    });
 };
 
 // Request handler for the signup page

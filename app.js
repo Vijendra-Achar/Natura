@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 // Local Module Imports
 const tourRouter = require('./routes/tourRoutes');
@@ -38,13 +39,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 // MIDDLEWARES / NPM PACKAGES
 
 // To set Secure HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 
 // To limit the number of requests coming from a single IP
 app.use(limiter);
 
 // Body parser / To read the data from the request Body
 app.use(express.json());
+
+// Cookie Parser / To read the incoming cookie
+app.use(cookieParser());
 
 // Preventing NOSQL Query Injection
 app.use(mongoSanitize());

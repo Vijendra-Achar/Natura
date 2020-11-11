@@ -56,23 +56,23 @@ const userSchema = new mongoose.Schema(
 );
 
 // Encrypts the Password before storing it into the Database / BCRYPT
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+// userSchema.pre('save', async function(next) {
+//   if (!this.isModified('password')) return next();
 
-  this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = undefined;
-  next();
-});
+//   this.password = await bcrypt.hash(this.password, 12);
+//   this.passwordConfirm = undefined;
+//   next();
+// });
 
-// Middleware function to set the passwordChangedAt field if the passsword was modified.
-userSchema.pre('save', function(next) {
-  if (!this.isModified('password') || this.isNew) {
-    return next();
-  }
+// // Middleware function to set the passwordChangedAt field if the passsword was modified.
+// userSchema.pre('save', function(next) {
+//   if (!this.isModified('password') || this.isNew) {
+//     return next();
+//   }
 
-  this.passwordChangedAt = Date.now() - 1000;
-  next();
-});
+//   this.passwordChangedAt = Date.now() - 1000;
+//   next();
+// });
 
 // Middleware to filter out the Inactive Users
 userSchema.pre(/^find/, function(next) {

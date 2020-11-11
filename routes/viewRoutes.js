@@ -1,6 +1,10 @@
 const express = require('express');
 const viewController = require('./../controllers/viewController');
+const authController = require('./../controllers/authController');
+
 const router = express.Router();
+
+router.use(authController.isLoggedIn);
 
 // GET route for the Home Overview Page
 router.get('/', viewController.getOverview);

@@ -9,9 +9,9 @@ const AppError = require('./../utils/appError');
 const sendEmail = require('./../utils/email');
 
 // Sign a new JWT Token
-const signJWTToken = id => {
+const signJWTToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
@@ -21,7 +21,7 @@ const createAndSendToken = (user, statusCode, res) => {
 
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-    httpOnly: true
+    httpOnly: true,
   };
 
   if (process.env.NODE_ENV === 'production') {
@@ -38,8 +38,8 @@ const createAndSendToken = (user, statusCode, res) => {
     status: 'success',
     token: myJWTtoken,
     data: {
-      user
-    }
+      user,
+    },
   });
 };
 
@@ -51,7 +51,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
-    role: req.body.role
+    role: req.body.role,
   });
 
   createAndSendToken(newUser, 201, res);
@@ -77,14 +77,28 @@ exports.login = catchAsync(async (req, res, next) => {
   createAndSendToken(user, 200, res);
 });
 
+// LogOut User
+exports.logout = (req, res, next) => {
+  const cookieOptions = {
+    expires: new Date(Date.now() + 1 * 1000),
+    httpOnly: true,
+  };
+
+  // Create and send the JWT via a cookie
+  res.cookie('jwt', 'logged-out', cookieOptions);
+  res.status(200).json({ status: 'success' });
+};
+
 // Route Protection
 exports.protectRoute = catchAsync(async (req, res, next) => {
   // 1 -> GET THE TOKEN
-  // Get the Token from the header and check if it exists
+  // Get the Token from the header or Cookie and check if it exists
   let token;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   // Check if the token exists
@@ -113,6 +127,48 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
   req.user = currentUserExists;
   next();
 });
+
+// Check if the user is actually logged in and render the userdetails
+exports.isLoggedIn = async (req, res, next) => {
+  try {
+    // 1 -> GET THE TOKEN
+    // Get the Token from the Cookie and check if it exists
+    let token;
+
+    if (req.cookies.jwt) {
+      token = req.cookies.jwt;
+
+      // 1 -> Check if the token exists
+      if (!token) {
+        return next();
+      }
+
+      // 2 -> TOKEN VERIFICATION
+      // If the token exists, then we need to verify if the token is valid.
+      const decodedToken = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+      // 3 -> USER CHECK
+      // Check if the user still exists in Our database / Check if the user was not deleted
+      const currentUserExists = await UserModel.findById(decodedToken.id);
+      if (!currentUserExists) {
+        return next();
+      }
+
+      // 4 -> CHECH FOR CHANGED PASSWORD
+      // Check if the token is generated from the current password
+      if (currentUserExists.checkPasswordChanged(decodedToken.iat)) {
+        return next();
+      }
+
+      // GET THE USER INFORMATION AND PASS IT TO THE FRONTEND
+      res.locals.user = currentUserExists;
+      return next();
+    }
+  } catch (err) {
+    return next();
+  }
+  next();
+};
 
 // Restrict the route access to only admin and lead-guide
 exports.restrictRoute = (...roles) => {
@@ -147,12 +203,12 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await sendEmail({
       email: req.body.email,
       subject,
-      message
+      message,
     });
 
     res.status(200).json({
       status: 'success',
-      message: 'Token has been send to the designated email!'
+      message: 'Token has been send to the designated email!',
     });
   } catch (err) {
     currentUser.passwordResetToken = undefined;
@@ -171,7 +227,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest('hex');
 
-  const currentUser = await UserModel.findOne({ passwordResetToken: hashedToken, passwordResetTokenExpires: { $gt: Date.now() } });
+  const currentUser = await UserModel.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetTokenExpires: { $gt: Date.now() },
+  });
 
   // If the token has not expired and there is a User, set New Password
   if (!currentUser) {
