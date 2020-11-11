@@ -8432,7 +8432,7 @@ exports.showAlert = showAlert;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.logout = exports.login = void 0;
+exports.signup = exports.logout = exports.login = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -8492,7 +8492,8 @@ var login = /*#__PURE__*/function () {
   return function login(_x, _x2) {
     return _ref.apply(this, arguments);
   };
-}();
+}(); // Function to make an API call and log the user out
+
 
 exports.login = login;
 
@@ -8532,9 +8533,63 @@ var logout = /*#__PURE__*/function () {
   return function logout() {
     return _ref2.apply(this, arguments);
   };
-}();
+}(); // Function to make an API call and create a new user account
+
 
 exports.logout = logout;
+
+var signup = /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(name, email, password, passwordConfirm) {
+    var res;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            _context3.next = 3;
+            return (0, _axios.default)({
+              method: 'POST',
+              url: 'http://127.0.0.1:3000/api/v1/users/signup',
+              data: {
+                name: name,
+                email: email,
+                password: password,
+                passwordConfirm: passwordConfirm
+              }
+            });
+
+          case 3:
+            res = _context3.sent;
+
+            if (res.data.status === 'success') {
+              (0, _alerts.showAlert)('success', 'Account was Created Successfully and Logged In! Please Wait...');
+              window.setTimeout(function () {
+                location.assign('/');
+              }, 1500);
+            }
+
+            _context3.next = 10;
+            break;
+
+          case 7:
+            _context3.prev = 7;
+            _context3.t0 = _context3["catch"](0);
+            (0, _alerts.showAlert)('error', _context3.t0.response.data.message);
+
+          case 10:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, null, [[0, 7]]);
+  }));
+
+  return function signup(_x3, _x4, _x5, _x6) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+exports.signup = signup;
 },{"axios":"../../node_modules/axios/index.js","./alerts":"alerts.js"}],"mapbox.js":[function(require,module,exports) {
 "use strict";
 
@@ -8846,13 +8901,26 @@ var _mapbox = require("./mapbox");
 
 // DOM Elements
 var map = document.getElementById('map');
-var loginForm = document.querySelector('.form');
+var loginForm = document.querySelector('#loginForm');
+var signupForm = document.querySelector('#signupForm');
 var logOutBtn = document.querySelector('.nav__el--logout'); // DELEGATION
 // Get the Map Locations and call the displayMap Function
 
 if (map) {
   var locations = JSON.parse(map.dataset.locations);
   (0, _mapbox.displayMap)(locations);
+} // Getting the Signup details, creating a new user and logging them in directly
+
+
+if (signupForm) {
+  signupForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('name').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    var passwordConfirm = document.getElementById('passwordConfirm').value;
+    (0, _login.signup)(name, email, password, passwordConfirm);
+  });
 } // Getting the Login Credentials form the user and logging the user in
 
 
@@ -8895,7 +8963,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60187" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62145" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
