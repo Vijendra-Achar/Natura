@@ -19,5 +19,8 @@ router.get('/signup', authController.isLoggedIn, viewController.signup);
 // GET route for the User Account
 router.get('/me', authController.protectRoute, viewController.getAccount);
 
+// POST route for the User Account data update **NOT RECOMMENDED**
+router.post('/update-user-data', authController.protectRoute, viewController.updateUserDataForm);
+
 // Export this Module
 module.exports = router;

@@ -49,10 +49,13 @@ app.use(
 app.use(limiter);
 
 // Body parser / To read the data from the request Body
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 
 // Cookie Parser / To read the incoming cookie
 app.use(cookieParser());
+
+// URL Parser / To decode the incoming data that is encoded in a url and parse the data
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Preventing NOSQL Query Injection
 app.use(mongoSanitize());
