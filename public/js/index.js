@@ -2,10 +2,13 @@
 import '@babel/polyfill';
 import { login, logout, signup } from './auth';
 import { displayMap } from './mapbox';
+import { updateUserData } from './accountSettings';
 
 // DOM Elements
 const map = document.getElementById('map');
 const loginForm = document.querySelector('#loginForm');
+const updateUserDataForm = document.querySelector('#updateUserData');
+
 const signupForm = document.querySelector('#signupForm');
 const logOutBtn = document.querySelector('.nav__el--logout');
 
@@ -38,6 +41,18 @@ if (loginForm) {
     const password = document.getElementById('password').value;
 
     login(email, password);
+  });
+}
+
+// Update user data using the API
+if (updateUserDataForm) {
+  updateUserDataForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const name = document.getElementById('name').value;
+
+    updateUserData(name, email);
   });
 }
 

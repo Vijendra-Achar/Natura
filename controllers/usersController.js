@@ -8,7 +8,7 @@ const factoryHandler = require('./factoryHandlers');
 const filterObj = (obj, ...updatableData) => {
   const filteredObjData = {};
 
-  Object.keys(obj).forEach(el => {
+  Object.keys(obj).forEach((el) => {
     if (updatableData.includes(el)) {
       filteredObjData[el] = obj[el];
     }
@@ -20,7 +20,7 @@ const filterObj = (obj, ...updatableData) => {
 exports.newUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'Post User Route not defined! Please use the /signUp Route to Create new User'
+    message: 'Post User Route not defined! Please use the /signUp Route to Create new User',
   });
 };
 
@@ -49,19 +49,19 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError('This route is not for Password Updates. Please user the relavent Route.', 400));
   }
   // Filer the Unnecessary fields. mention only the Updatable fields.
-  const filteredObj = filterObj(req.body, 'name');
+  const filteredObj = filterObj(req.body, 'name', 'email');
   // Update User Data
   const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, filteredObj, {
     runValidators: true,
-    new: true
+    new: true,
   });
 
   // Send the Response
   res.status(200).json({
     status: 'success',
     data: {
-      user: updatedUser
-    }
+      user: updatedUser,
+    },
   });
 });
 
@@ -72,6 +72,6 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   // Send the Response
   res.status(204).json({
     status: 'success',
-    data: null
+    data: null,
   });
 });
