@@ -8640,7 +8640,7 @@ exports.displayMap = displayMap;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateUserData = void 0;
+exports.updatePassword = exports.updateInfo = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -8652,7 +8652,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var updateUserData = /*#__PURE__*/function () {
+// Function to update the currently logged in user's data
+var updateInfo = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(name, email) {
     var res;
     return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -8700,12 +8701,69 @@ var updateUserData = /*#__PURE__*/function () {
     }, _callee, null, [[0, 9]]);
   }));
 
-  return function updateUserData(_x, _x2) {
+  return function updateInfo(_x, _x2) {
     return _ref.apply(this, arguments);
+  };
+}(); // Function to update the currently logged in user's data
+
+
+exports.updateInfo = updateInfo;
+
+var updatePassword = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(passwordCurrent, password, passwordConfirm) {
+    var res;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            _context2.next = 3;
+            return (0, _axios.default)({
+              method: 'PATCH',
+              url: 'http://127.0.0.1:3000/api/v1/users/updateMyPassword',
+              data: {
+                passwordCurrent: passwordCurrent,
+                password: password,
+                passwordConfirm: passwordConfirm
+              }
+            });
+
+          case 3:
+            res = _context2.sent;
+
+            if (res.data.data.status === 'success') {
+              res.status(200).render('account', {
+                title: res.locals.user.name,
+                user: res.data.data.user
+              });
+            }
+
+            (0, _alerts.showAlert)('success', 'Your Password was updated successfully!');
+            window.setTimeout(function () {
+              location.reload();
+            }, 1500);
+            _context2.next = 12;
+            break;
+
+          case 9:
+            _context2.prev = 9;
+            _context2.t0 = _context2["catch"](0);
+            (0, _alerts.showAlert)('error', _context2.t0.response.data.message);
+
+          case 12:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[0, 9]]);
+  }));
+
+  return function updatePassword(_x3, _x4, _x5) {
+    return _ref2.apply(this, arguments);
   };
 }();
 
-exports.updateUserData = updateUserData;
+exports.updatePassword = updatePassword;
 },{"axios":"../../node_modules/axios/index.js","./alerts":"alerts.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -8973,10 +9031,15 @@ var _mapbox = require("./mapbox");
 
 var _accountSettings = require("./accountSettings");
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 // DOM Elements
 var map = document.getElementById('map');
 var loginForm = document.querySelector('#loginForm');
 var updateUserDataForm = document.querySelector('#updateUserData');
+var updatePasswordForm = document.querySelector('#updatePassword');
 var signupForm = document.querySelector('#signupForm');
 var logOutBtn = document.querySelector('.nav__el--logout'); // DELEGATION
 // Get the Map Locations and call the displayMap Function
@@ -8988,34 +9051,132 @@ if (map) {
 
 
 if (signupForm) {
-  signupForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    var passwordConfirm = document.getElementById('passwordConfirm').value;
-    (0, _auth.signup)(name, email, password, passwordConfirm);
-  });
+  signupForm.addEventListener('submit', /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
+      var name, email, password, passwordConfirm;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              e.preventDefault();
+              name = document.getElementById('name').value;
+              email = document.getElementById('email').value;
+              password = document.getElementById('password').value;
+              passwordConfirm = document.getElementById('passwordConfirm').value;
+              _context.next = 7;
+              return (0, _auth.signup)(name, email, password, passwordConfirm);
+
+            case 7:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function (_x) {
+      return _ref.apply(this, arguments);
+    };
+  }());
 } // Getting the Login Credentials form the user and logging the user in
 
 
 if (loginForm) {
-  loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    (0, _auth.login)(email, password);
-  });
+  loginForm.addEventListener('submit', /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e) {
+      var email, password;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              e.preventDefault();
+              email = document.getElementById('email').value;
+              password = document.getElementById('password').value;
+              _context2.next = 5;
+              return (0, _auth.login)(email, password);
+
+            case 5:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }));
+
+    return function (_x2) {
+      return _ref2.apply(this, arguments);
+    };
+  }());
 } // Update user data using the API
 
 
 if (updateUserDataForm) {
-  updateUserDataForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var email = document.getElementById('email').value;
-    var name = document.getElementById('name').value;
-    (0, _accountSettings.updateUserData)(name, email);
-  });
+  updateUserDataForm.addEventListener('submit', /*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(e) {
+      var email, name;
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              e.preventDefault();
+              document.getElementById('updateDataBtn').textContent = 'Updating...';
+              email = document.getElementById('email').value;
+              name = document.getElementById('name').value;
+              _context3.next = 6;
+              return (0, _accountSettings.updateInfo)(name, email);
+
+            case 6:
+              document.getElementById('updateDataBtn').textContent = 'Save Settings';
+
+            case 7:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
+
+    return function (_x3) {
+      return _ref3.apply(this, arguments);
+    };
+  }());
+} // Update the Password Using API
+
+
+if (updatePasswordForm) {
+  updatePasswordForm.addEventListener('submit', /*#__PURE__*/function () {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(e) {
+      var passwordCurrent, password, passwordConfirm;
+      return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              e.preventDefault();
+              document.getElementById('updatePasswordBtn').textContent = 'Updating...';
+              passwordCurrent = document.getElementById('password-current').value;
+              password = document.getElementById('password').value;
+              passwordConfirm = document.getElementById('password-confirm').value;
+              _context4.next = 7;
+              return (0, _accountSettings.updatePassword)(passwordCurrent, password, passwordConfirm);
+
+            case 7:
+              document.getElementById('updatePasswordBtn').textContent = 'Save Password';
+              document.getElementById('password-current').value = '';
+              document.getElementById('password').value = '';
+              document.getElementById('password-confirm').value = '';
+
+            case 11:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4);
+    }));
+
+    return function (_x4) {
+      return _ref4.apply(this, arguments);
+    };
+  }());
 } // Logout User
 
 

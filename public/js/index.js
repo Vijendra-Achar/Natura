@@ -2,12 +2,14 @@
 import '@babel/polyfill';
 import { login, logout, signup } from './auth';
 import { displayMap } from './mapbox';
-import { updateUserData } from './accountSettings';
+import { updateInfo, updatePassword } from './accountSettings';
 
 // DOM Elements
 const map = document.getElementById('map');
+
 const loginForm = document.querySelector('#loginForm');
 const updateUserDataForm = document.querySelector('#updateUserData');
+const updatePasswordForm = document.querySelector('#updatePassword');
 
 const signupForm = document.querySelector('#signupForm');
 const logOutBtn = document.querySelector('.nav__el--logout');
@@ -21,7 +23,7 @@ if (map) {
 
 // Getting the Signup details, creating a new user and logging them in directly
 if (signupForm) {
-  signupForm.addEventListener('submit', (e) => {
+  signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const name = document.getElementById('name').value;
@@ -29,30 +31,56 @@ if (signupForm) {
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('passwordConfirm').value;
 
-    signup(name, email, password, passwordConfirm);
+    await signup(name, email, password, passwordConfirm);
   });
 }
 
 // Getting the Login Credentials form the user and logging the user in
 if (loginForm) {
-  loginForm.addEventListener('submit', (e) => {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    login(email, password);
+    await login(email, password);
   });
 }
 
 // Update user data using the API
 if (updateUserDataForm) {
-  updateUserDataForm.addEventListener('submit', (e) => {
+  updateUserDataForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    document.getElementById('updateDataBtn').textContent = 'Updating...';
 
     const email = document.getElementById('email').value;
     const name = document.getElementById('name').value;
 
-    updateUserData(name, email);
+    await updateInfo(name, email);
+
+    document.getElementById('updateDataBtn').textContent = 'Save Settings';
+  });
+}
+
+// Update the Password Using API
+if (updatePasswordForm) {
+  updatePasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    document.getElementById('updatePasswordBtn').textContent = 'Updating...';
+
+    const passwordCurrent = document.getElementById('password-current').value;
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('password-confirm').value;
+
+    await updatePassword(passwordCurrent, password, passwordConfirm);
+
+    document.getElementById('updatePasswordBtn').textContent = 'Save Password';
+
+    document.getElementById('password-current').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('password-confirm').value = '';
   });
 }
 
