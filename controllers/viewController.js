@@ -28,20 +28,21 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
 // Request handler for the login page
 exports.login = (req, res) => {
-  res
-    .status(200)
-    // .set(
-    //   'Content-Security-Policy',
-    //   "script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js 'unsafe-inline' 'unsafe-eval';",
-    // )
-    .render('login', {
-      title: 'Login',
-    });
+  res.status(200).render('login', {
+    title: 'Login',
+  });
 };
 
 // Request handler for the signup page
 exports.signup = (req, res) => {
   res.status(200).render('signup', {
     title: 'Sign Up',
+  });
+};
+
+// Request handler for User Account
+exports.getAccount = (req, res) => {
+  res.status(200).render('account', {
+    title: res.locals.user.name,
   });
 };

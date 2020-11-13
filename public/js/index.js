@@ -1,6 +1,6 @@
 // All Imports
 import '@babel/polyfill';
-import { login, logout, signup } from './login';
+import { login, logout, signup } from './auth';
 import { displayMap } from './mapbox';
 
 // DOM Elements
