@@ -1,7 +1,15 @@
+# Node package modules 
 node_modules/
+
+# Data usedfor Development
 dev-data/
+
+# Sensitive Information
 config.env
+
+# Parcel Cache
 /.cache
 
+# Parcel bundles
 /public/js/bundle.js
 /public/js/bundle.js.map

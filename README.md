@@ -15,6 +15,10 @@ The Dependencies required for the Project are enlisted in 'package.json' file.
 
 Run `node server.js` for a dev server. Use the route - `http://localhost:YOUR_PORT/` for the development and testing.
 
+## Server side rendering using Parcel
+
+Run `npm run watch:js` to bundle the Javascript files and watch for changes. Use the route - `http://localhost:YOUR_PORT/` for the development and testing.
+
 ## Postman API Documentation
 
 Please visit the site - `https://documenter.getpostman.com/view/12322615/TVYQ2ZfZ` to get a detailed insight into all the routes implemented in this API.
