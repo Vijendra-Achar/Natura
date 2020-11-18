@@ -73,15 +73,15 @@ exports.getMe = (req, res, next) => {
 
 // Request Handling to update the details of the currently Logged in User
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.file);
-
   // We should not allow the user to update the Password using this route. Check for Password in the Body
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for Password Updates. Please user the relavent Route.', 400));
   }
   // Filer the Unnecessary fields. mention only the Updatable fields.
   const filteredObj = filterObj(req.body, 'name', 'email');
+
+  // Check if a file exists in the request object
+  if (req.file) filteredObj.photo = req.file.filename;
   // Update User Data
   const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, filteredObj, {
     runValidators: true,

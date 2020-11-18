@@ -39,10 +39,9 @@ block content
                             label.form__label(for='email') Email address
                             input#email.form__input(type='email', value=`${user.email}`, required)
                         .form__group.form__photo-upload
-                            if user.photo
-                                img.form__user-photo(src=`img/users/${user.photo}`, alt='User photo')
-                            else
-                                img.form__user-photo(src=`img/users/default.jpg`, alt='User photo')
+                            
+                            img.form__user-photo(src=`img/users/${user.photo}`, alt='User photo')
+                            
                             a.btn-text(href='') Choose new photo
                         .form__group.right
                             button#updateDataBtn.btn.btn--small.btn--green Save settings

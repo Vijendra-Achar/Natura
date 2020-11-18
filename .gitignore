@@ -2,7 +2,7 @@
 node_modules/
 
 # Data usedfor Development
-dev-data/
+# dev-data/
 
 # Sensitive Information
 config.env
