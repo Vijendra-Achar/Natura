@@ -54,10 +54,13 @@ if (updateUserDataForm) {
 
     document.getElementById('updateDataBtn').textContent = 'Updating...';
 
-    const email = document.getElementById('email').value;
-    const name = document.getElementById('name').value;
+    const form = new FormData();
 
-    await updateInfo(name, email);
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+
+    await updateInfo(form);
 
     document.getElementById('updateDataBtn').textContent = 'Save Settings';
   });

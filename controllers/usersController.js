@@ -2,19 +2,23 @@ const UserModel = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const multer = require('multer');
+const sharp = require('sharp');
 
 const factoryHandler = require('./factoryHandlers');
 
 // Multer function to configure the desination and name of the file
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/img/users');
-  },
-  filename: (req, file, cb) => {
-    let fileName = `user-${req.user.id}-${Date.now()}.${file.mimetype.split('/')[1]}`;
-    cb(null, fileName);
-  },
-});
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'public/img/users');
+//   },
+//   filename: (req, file, cb) => {
+//     let fileName = `user-${req.user.id}-${Date.now()}.${file.mimetype.split('/')[1]}`;
+//     cb(null, fileName);
+//   },
+// });
+
+// Multer function to store the image in memory for futher processing
+const multerStorage = multer.memoryStorage();
 
 // Multer function to check if only Image types are being uploaded
 const multerFilter = (req, file, cb) => {
@@ -32,6 +36,20 @@ const upload = multer({
 });
 
 exports.uploadImageFile = upload.single('photo');
+
+exports.processUserImage = (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 80 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+  next();
+};
 
 // Method to filter the data before Document Updation
 const filterObj = (obj, ...updatableData) => {

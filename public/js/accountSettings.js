@@ -2,15 +2,12 @@ import axios from 'axios';
 import { showAlert } from './alerts';
 
 // Function to update the currently logged in user's data
-export const updateInfo = async (name, email) => {
+export const updateInfo = async (data) => {
   try {
     const res = await axios({
       method: 'PATCH',
       url: 'http://127.0.0.1:3000/api/v1/users/updateMe',
-      data: {
-        name,
-        email,
-      },
+      data,
     });
 
     if (res.data.data.status === 'success') {

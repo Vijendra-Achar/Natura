@@ -27,7 +27,7 @@ router.get('/me', userController.getMe, userController.oneUserData);
 router.patch('/updateMyPassword', authController.updatePassword);
 
 // Patch Request for Updating User data
-router.patch('/updateMe', userController.uploadImageFile, userController.updateMe);
+router.patch('/updateMe', userController.uploadImageFile, userController.processUserImage, userController.updateMe);
 
 // Delete Request for Deleteing User data
 router.delete('/deleteMe', userController.deleteMe);

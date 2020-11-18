@@ -42,7 +42,8 @@ block content
                             
                             img.form__user-photo(src=`img/users/${user.photo}`, alt='User photo')
                             
-                            a.btn-text(href='') Choose new photo
+                            input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+                            label(for='photo') Change Profile Photo
                         .form__group.right
                             button#updateDataBtn.btn.btn--small.btn--green Save settings
                 .line &nbsp;
