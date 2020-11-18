@@ -1,8 +1,37 @@
 const UserModel = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const multer = require('multer');
 
 const factoryHandler = require('./factoryHandlers');
+
+// Multer function to configure the desination and name of the file
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/users');
+  },
+  filename: (req, file, cb) => {
+    let fileName = `user-${req.user.id}-${Date.now()}.${file.mimetype.split('/')[1]}`;
+    cb(null, fileName);
+  },
+});
+
+// Multer function to check if only Image types are being uploaded
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('The uploaded file is not an Image. Please select an Image file', 400), false);
+  }
+};
+
+// Multer file upload config
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadImageFile = upload.single('photo');
 
 // Method to filter the data before Document Updation
 const filterObj = (obj, ...updatableData) => {
@@ -44,6 +73,9 @@ exports.getMe = (req, res, next) => {
 
 // Request Handling to update the details of the currently Logged in User
 exports.updateMe = catchAsync(async (req, res, next) => {
+  console.log(req.body);
+  console.log(req.file);
+
   // We should not allow the user to update the Password using this route. Check for Password in the Body
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for Password Updates. Please user the relavent Route.', 400));
