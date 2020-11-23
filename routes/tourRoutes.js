@@ -40,7 +40,13 @@ router
 router
   .route('/:id')
   .get(tourController.getOneTour)
-  .patch(authController.protectRoute, authController.restrictRoute('lead-guide', 'admin'), tourController.patchTour)
+  .patch(
+    authController.protectRoute,
+    authController.restrictRoute('lead-guide', 'admin'),
+    tourController.uploadTourImage,
+    tourController.processAndStoreTourImage,
+    tourController.patchTour,
+  )
   .delete(authController.protectRoute, authController.restrictRoute('lead-guide', 'admin'), tourController.deleteTour);
 
 // Export this Module

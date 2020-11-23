@@ -1,6 +1,8 @@
 const AppError = require('../utils/appError');
 const TourModel = require('./../models/tourModels');
 const catchAsync = require('./../utils/catchAsync');
+const sharp = require('sharp');
+const multer = require('multer');
 
 const factoryHandler = require('./factoryHandlers');
 
@@ -26,6 +28,71 @@ exports.deleteTour = factoryHandler.deleteOne(TourModel);
 
 // Request Handling Function For POST new Tour
 exports.CreateNewTour = factoryHandler.createOne(TourModel);
+
+// Multer function to store the image in memory for futher processing
+const multerStorage = multer.memoryStorage();
+
+// Multer function to check if only Image types are being uploaded
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('The uploaded file is not an Image. Please select an Image file', 400), false);
+  }
+};
+
+// Multer file upload config
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+// Middleware to accept the Images
+exports.uploadTourImage = upload.fields([
+  {
+    name: 'imageCover',
+    maxCount: 1,
+  },
+  {
+    name: 'images',
+    maxCount: 3,
+  },
+]);
+
+// Midllware to process and store the image
+exports.processAndStoreTourImage = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) {
+    return next();
+  }
+
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  // Process Cover image
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 80 })
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+
+  // Process the tour Images
+  req.body.images = [];
+
+  await Promise.all(
+    req.files.images.map(async (file, index) => {
+      const imageFileName = `tour-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
+
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 80 })
+        .toFile(`public/img/tours/${imageFileName}`);
+
+      req.body.images.push(imageFileName);
+    }),
+  );
+
+  next();
+});
 
 // Request handling function for GET Tours-within / /tours-within/:distance/center/:latlong/unit/:unit
 exports.getToursWithin = catchAsync(async (req, res, next) => {

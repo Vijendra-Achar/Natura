@@ -1,19 +1,30 @@
 /*-------------------------------------------EXTRAS-------------------------------------------------------------------*/
 
-// // Document Middleware to Embed users data into tour data
-// //PRE Document Middleware
-// tourSchema.pre('save', async function(next) {
-//   const guidePromises = this.guides.map(async id => {
-//     return await UserModel.findById(id);
-//   });
+//Document Middleware to Embed users data into tour data
+ PRE Document Middleware
+ tourSchema.pre('save', async function(next) {
+   const guidePromises = this.guides.map(async id => {
+     return await UserModel.findById(id);
+   });
 
-//   this.guides = await Promise.all(guidePromises);
+   this.guides = await Promise.all(guidePromises);
 
-//   next();
-// });
+   next();
+ });
 
-// // POST Document Middleware
-// tourSchema.post('save', function(doc, next) {
-//   console.log(doc);
-//   next();
-// });
+//POST Document Middleware
+ tourSchema.post('save', function(doc, next) {
+   console.log(doc);
+   next();
+ });
+
+// Multer function to configure the desination and name of the file
+ const multerStorage = multer.diskStorage({
+   destination: (req, file, cb) => {
+     cb(null, 'public/img/users');
+   },
+   filename: (req, file, cb) => {
+     let fileName = `user-${req.user.id}-${Date.now()}.${file.mimetype.split('/')[1]}`;
+     cb(null, fileName);
+   },
+ });
