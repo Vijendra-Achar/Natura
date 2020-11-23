@@ -56,4 +56,8 @@ module.exports = class Email {
   async sendWelcome() {
     await this.send('welcome', 'Welcome to the Natura Project!');
   }
+
+  async sendPasswordReset() {
+    await this.send('passwordReset', 'Hello, Your Password Reset Token is here. (valid for 10 mins).');
+  }
 };
