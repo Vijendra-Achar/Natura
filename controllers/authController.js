@@ -6,7 +6,7 @@ const { promisify } = require('util');
 const UserModel = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-const sendEmail = require('./../utils/email');
+const Email = require('./../utils/email');
 
 // Sign a new JWT Token
 const signJWTToken = (id) => {
@@ -53,6 +53,10 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
     role: req.body.role,
   });
+
+  // Send the Welcome Email
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  await new Email(newUser, url).sendWelcome();
 
   createAndSendToken(newUser, 201, res);
 });
@@ -201,11 +205,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const subject = `Hello, Your Password Reset Token is here. (valid for 10 mins).`;
 
   try {
-    await sendEmail({
-      email: req.body.email,
-      subject,
-      message,
-    });
+    // await sendEmail({
+    //   email: req.body.email,
+    //   subject,
+    //   message,
+    // });
 
     res.status(200).json({
       status: 'success',
