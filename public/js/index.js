@@ -2,6 +2,7 @@
 import '@babel/polyfill';
 import { login, logout, signup } from './auth';
 import { displayMap } from './mapbox';
+import { bookTour } from './stripe';
 import { updateInfo, updatePassword } from './accountSettings';
 
 // DOM Elements
@@ -13,6 +14,8 @@ const updatePasswordForm = document.querySelector('#updatePassword');
 
 const signupForm = document.querySelector('#signupForm');
 const logOutBtn = document.querySelector('.nav__el--logout');
+
+const bookTourBtn = document.querySelector('#book-tour');
 
 // DELEGATION
 // Get the Map Locations and call the displayMap Function
@@ -89,3 +92,12 @@ if (updatePasswordForm) {
 
 // Logout User
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
+
+if (bookTourBtn) {
+  bookTourBtn.addEventListener('click', (e) => {
+    bookTourBtn.textContent = 'Processing...';
+    const { tourId } = e.target.dataset;
+
+    bookTour(tourId);
+  });
+}

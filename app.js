@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const tourRouter = require('./routes/tourRoutes');
 const usersRouter = require('./routes/usersRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -96,6 +97,9 @@ app.use('/api/v1/users', usersRouter);
 
 // Review Routes
 app.use('/api/v1/reviews', reviewRouter);
+
+// Booking / Checkout Routes
+app.use('/api/v1/booking', bookingRouter);
 
 // Router to handle UNDEFINED Routes
 app.all('*', (req, res, next) => {

@@ -1,8 +1,7 @@
-// import { MAPBOX_ACCESS_TOKEN } from './environment';
+import { mapboxAccessToken } from './environment';
 
 export const displayMap = (locations) => {
-  mapboxgl.accessToken =
-    'pk.eyJ1IjoidmlqZW5kcmFjaGFyIiwiYSI6ImNraDcyaWUxdzBoeDUycG56ano5bHR5Z2kifQ.ccHbOExocP4G_2cJabutbg';
+  mapboxgl.accessToken = mapboxAccessToken;
 
   var map = new mapboxgl.Map({
     container: 'map',
