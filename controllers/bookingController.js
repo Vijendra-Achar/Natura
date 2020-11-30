@@ -2,7 +2,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const TourModel = require('./../models/tourModels');
 const BookingModel = require('./../models/bookingModel');
 const catchAsync = require('./../utils/catchAsync');
-const bookingModel = require('./../models/bookingModel');
+
+const factoryHandler = require('./factoryHandlers');
 
 // Route Handler to create a checkout Session
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
@@ -43,7 +44,22 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 
   if (!tour || !price || !user) return next();
 
-  await bookingModel.create({ tour, price, user });
+  await BookingModel.create({ tour, price, user });
 
   res.redirect(req.originalUrl.split('?')[0]);
 });
+
+// Route Handler to get all the bookings of all users
+exports.getAllBookings = factoryHandler.getAll(BookingModel);
+
+// Route Handler to get one booking with a booking ID
+exports.getOneBooking = factoryHandler.getOne(BookingModel);
+
+// Route Handler to Create a new booking
+exports.createBooking = factoryHandler.createOne(BookingModel);
+
+// Route Handler to update one booking with a booking ID
+exports.updateBooking = factoryHandler.updateOne(BookingModel);
+
+// Route Handler to delete one booking with a booking ID
+exports.deleteBooking = factoryHandler.deleteOne(BookingModel);
