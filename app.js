@@ -9,6 +9,7 @@ const hpp = require('hpp');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 // Local Module Imports
 const tourRouter = require('./routes/tourRoutes');
@@ -23,6 +24,9 @@ const app = express();
 
 // Enable the option to trust proxies
 app.enable('trust proxy');
+
+// Enable CORS for Cross origin requests
+app.use(cors());
 
 // Set the app view engine to pug templetes
 app.set('view engine', 'pug');
