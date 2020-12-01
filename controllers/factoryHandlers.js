@@ -1,6 +1,6 @@
-const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
-const APIFeatures = require('./../utils/apiFeatures');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const APIFeatures = require('../utils/apiFeatures');
 
 // Handler function for getting all Documents
 exports.getAll = (MyModel) => {

@@ -1,6 +1,6 @@
 const AppError = require('../utils/appError');
-const TourModel = require('./../models/tourModels');
-const catchAsync = require('./../utils/catchAsync');
+const TourModel = require('../models/tourModels');
+const catchAsync = require('../utils/catchAsync');
 const sharp = require('sharp');
 const multer = require('multer');
 

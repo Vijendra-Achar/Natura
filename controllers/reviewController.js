@@ -1,5 +1,5 @@
 // Imports
-const ReviewModel = require('./../models/reviewModel');
+const ReviewModel = require('../models/reviewModel');
 const factoryHandler = require('./factoryHandlers');
 // const catchAsync = require('./../utils/catchAsync');
 

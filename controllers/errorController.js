@@ -1,5 +1,5 @@
 // Imports
-const AppError = require('./../utils/appError');
+const AppError = require('../utils/appError');
 
 // Function to handle invalid IDs / Cast Error
 const handleCastErrorDB = (err) => {

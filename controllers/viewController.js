@@ -1,9 +1,9 @@
-const TourModel = require('./../models/tourModels');
-const UserModel = require('./../models/userModel');
-const BookingModel = require('./../models/bookingModel');
-const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/AppError');
-const bookingModel = require('./../models/bookingModel');
+const TourModel = require('../models/tourModels');
+const UserModel = require('../models/userModel');
+const BookingModel = require('../models/bookingModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const bookingModel = require('../models/bookingModel');
 
 // Request Handler for the Home Overview Page
 exports.getOverview = catchAsync(async (req, res, next) => {
