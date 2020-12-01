@@ -34,9 +34,9 @@ mongoose
   });
 
 // Server Port Number and Server's Event Loop
-const port = 3000;
+const port = process.env.PORT || 3000;
 const myServer = app.listen(port, () => {
-  console.log(`Project Natura running on port localhost:${port}`);
+  console.log(`Project Natura running on port ${port}`);
 });
 
 process.on('unhandledRejection', (err) => {

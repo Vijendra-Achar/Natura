@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 // Local Module Imports
 const tourRouter = require('./routes/tourRoutes');
@@ -75,6 +76,9 @@ app.use(
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// Response compression middleware
+app.use(compression());
 
 // CUSTOM MIDDLEWARES
 // Middleware to capture the time of Request.
