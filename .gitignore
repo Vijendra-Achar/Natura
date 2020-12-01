@@ -11,8 +11,8 @@ config.env
 /.cache
 
 # Parcel bundles
-/public/js/bundle.js
-/public/js/bundle.js.map
+# /public/js/bundle.js
+# /public/js/bundle.js.map
 
 # Private API Keys
 /public/js/environment.js
