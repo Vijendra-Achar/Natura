@@ -16,20 +16,15 @@ const signJWTToken = (id) => {
 };
 
 // Generate the Token and send a Response
-const createAndSendToken = (user, statusCode, res) => {
+const createAndSendToken = (user, statusCode, req, res) => {
   const myJWTtoken = signJWTToken(user._id);
 
-  const cookieOptions = {
+  // Create and send the JWT via a cookie
+  res.cookie('jwt', myJWTtoken, {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
     httpOnly: true,
-  };
-
-  if (process.env.NODE_ENV === 'production') {
-    cookieOptions.secure = true;
-  }
-
-  // Create and send the JWT via a cookie
-  res.cookie('jwt', myJWTtoken, cookieOptions);
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+  });
 
   // Remove the Password from the Response object
   user.password = undefined;
@@ -58,7 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
 
-  createAndSendToken(newUser, 201, res);
+  createAndSendToken(newUser, 201, req, res);
 });
 
 // Login an existing User
@@ -78,7 +73,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   // If Correct, Sign the token and Send the Response
-  createAndSendToken(user, 200, res);
+  createAndSendToken(user, 200, req, res);
 });
 
 // LogOut User
@@ -245,7 +240,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   // Update the passwordChangedAt property to the current time (Middleware Function).
   // Log the User in, Send a JWT
-  createAndSendToken(currentUser, 200, res);
+  createAndSendToken(currentUser, 200, req, res);
 });
 
 // Route to change the password with the Current Password
@@ -264,5 +259,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   await currentUser.save();
 
-  createAndSendToken(currentUser, 200, res);
+  createAndSendToken(currentUser, 200, req, res);
 });

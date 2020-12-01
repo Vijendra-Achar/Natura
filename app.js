@@ -21,8 +21,12 @@ const AppError = require('./utils/appError');
 
 const app = express();
 
+// Enable the option to trust proxies
+app.enable('trust proxy');
+
 // Set the app view engine to pug templetes
 app.set('view engine', 'pug');
+
 // Set the app engine to look for templates in the Views folder
 app.set('views', path.join(__dirname, 'views'));
 

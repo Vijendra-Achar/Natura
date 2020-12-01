@@ -39,10 +39,19 @@ const myServer = app.listen(port, () => {
   console.log(`Project Natura running on port ${port}`);
 });
 
+// A process to shut down the server in case of an unhandled rejection
 process.on('unhandledRejection', (err) => {
   console.log(err.name);
   console.log(err.message);
   myServer.close(() => {
     process.exit(1);
+  });
+});
+
+// A process to shut dowun the server gracefully in case of a SIGTERM signal
+process.on('SIGTERM', () => {
+  console.log('👋 Gracefully shutting down due to a SIGTERM signal');
+  myServer.close(() => {
+    console.log('💥 Server shutdown');
   });
 });
