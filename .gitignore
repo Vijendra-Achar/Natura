@@ -15,4 +15,4 @@ config.env
 # /public/js/bundle.js.map
 
 # Private API Keys
-/public/js/environment.js
+# /public/js/environment.js
