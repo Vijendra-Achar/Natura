@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 router.use(authController.protectRoute);
 
 // Route for creating a new booking in the database once the payment is successfull
-router.get('/checkout/:tourId');
+router.get('/checkout/:tourId', bookingController.getCheckoutSession);
 
 // Only the admin can access these routes
 router.use(authController.restrictRoute('admin', 'lead-guide'));
