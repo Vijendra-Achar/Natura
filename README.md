@@ -21,6 +21,10 @@ Run `npm run watch:js` to bundle the Javascript files and watch for changes. Use
 
 ## Postman API Documentation
 
-Please visit the site - `https://documenter.getpostman.com/view/12322615/TVYQ2ZfZ` to get a detailed insight into all the routes implemented in this API.
+Please [Click Here](https://documenter.getpostman.com/view/12322615/TVYQ2ZfZ) to visit the site to get a detailed insight into all the routes implemented in this API.
+
+## Hosting
+
+The API and the server side rendered website can be found on the domain [Natura-project](https://natura-project.herokuapp.com/) .
 
 ### Thank You 😊

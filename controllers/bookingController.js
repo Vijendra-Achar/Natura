@@ -1,5 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const TourModel = require('../models/tourModels');
+const UserModel = require('../models/userModel');
 const BookingModel = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 
@@ -13,9 +14,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   // 2 --> Create the stripe check out session
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId}&user=${req.user.id}&price=${
-      tour.price
-    }`,
+    success_url: `${req.protocol}://${req.get('host')}/my-bookings`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
@@ -48,6 +47,39 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 
   res.redirect(req.originalUrl.split('?')[0]);
 });
+
+// Function to save the data upon a webhook event ( if Successful)
+creatingBookingUponCheckout = catchAsync(async (session) => {
+  const tour = session.client_reference_id;
+  const price = session.display_items[0].amount / 100;
+  const user = await UserModel.findOne({ email: session.customer_email });
+
+  // Save the data to the database
+  await BookingModel.create({ tour, price, user });
+});
+
+// Route handler to write the booking data to the database sing the webhooks, and then redirect to the home page
+exports.stripeWebhookCheckout = (req, res, next) => {
+  // Get the Signature form the Header
+  const signature = req.headers['stripe-signature'];
+
+  let stripeEvent;
+  try {
+    stripeEvent = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SESSION_CHECKOUT_COMPLETE,
+    );
+  } catch (err) {
+    res.status(400).send(`error: ${err}`);
+  }
+
+  if (stripeEvent.type === 'checkout.session.completed') {
+    creatingBookingUponCheckout(stripeEvent.data.object);
+  }
+
+  res.status(200).json({ recived: true });
+};
 
 // Route Handler to get all the bookings of all users
 exports.getAllBookings = factoryHandler.getAll(BookingModel);

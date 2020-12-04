@@ -16,9 +16,11 @@ const tourRouter = require('./routes/tourRoutes');
 const usersRouter = require('./routes/usersRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
+const { application } = require('express');
 
 const app = express();
 
@@ -27,6 +29,9 @@ app.enable('trust proxy');
 
 // Enable CORS for Cross origin requests
 app.use(cors());
+
+// Enable CORS for options like POST / PUT / DELETE
+app.options('*', cors());
 
 // Set the app view engine to pug templetes
 app.set('view engine', 'pug');
@@ -57,6 +62,13 @@ app.use(
 
 // To limit the number of requests coming from a single IP
 app.use(limiter);
+
+// Route for the stripe webhook checkout
+app.post(
+  '/stripe-webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.stripeWebhookCheckout,
+);
 
 // Body parser / To read the data from the request Body
 app.use(express.json({ limit: '10kb' }));
