@@ -51,8 +51,8 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 // Function to save the data upon a webhook event ( if Successful)
 const creatingBookingUponCheckout = catchAsync(async (session) => {
   const tour = session.client_reference_id;
-  const price = session.display_items[0].amount / 100;
-  const user = await UserModel.findOne({ email: session.customer_email });
+  const price = session.amount_total / 100;
+  const user = (await UserModel.findOne({ email: session.customer_email })).id;
 
   // Save the data to the database
   await BookingModel.create({ tour, price, user });
